@@ -3,10 +3,25 @@ import './App.scss';
 import {Col, Form, Nav, Row, Tab, Table, Tabs} from "react-bootstrap";
 import axios from 'axios';
 
-function App() {
-    const [views, setViews] = useState([] as any[]);
+type View = {
+    name: string,
+    columns: string[],
+    sortBy: string,
+    sortByOrder: string,
+    pageSize: string
+}
+type Account = {
+    created: string,
+    accountNumber: string,
+    accountType: string,
+    clientName: string,
+    balance: string,
+}
 
-    const [accounts, setAccounts] = useState([] as any[]);
+function App() {
+    const [views, setViews] = useState([] as View[]);
+
+    const [accounts, setAccounts] = useState([] as Account[]);
     const columns = [{id: 'created', label: 'Created'},
         {id: 'accountNumber', label: 'Account number'},
         {id: 'accountType', label: 'Account type'},
@@ -68,7 +83,7 @@ function App() {
                                             {columns.map((c, cIndex) => {
                                                 return <Form.Check name={c.id} key={cIndex} type="checkbox"
                                                                    label={c.label}
-                                                                   checked={views[index].columns?.filter((c2: string) => c2 === c.id).length}
+                                                                   checked={!!views[index].columns?.filter((c2: string) => c2 === c.id).length}
                                                                    onChange={(e) => {
                                                                        if (!views[index].columns) {
                                                                            views[index].columns = [];
@@ -135,7 +150,7 @@ function App() {
 
                         </Tabs>
                         <button onClick={() => {
-                            setViews([...views, {}]);
+                            setViews([...views, {} as View]);
                         }}>+
                         </button>
                     </Tab.Pane>
@@ -161,7 +176,7 @@ function App() {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {accounts.sort((a, b) => (a[v.sortBy] > b[v.sortBy])
+                                        {accounts.sort((a: any, b: any) => (a[v.sortBy] > b[v.sortBy])
                                             ? v.sortByOrder ? -1 : 1 : v.sortByOrder ? 1 : -1).map((a, cIndex) => {
                                             return <tr key={cIndex}>
                                                 {!!v.columns?.filter((c: string) => c === 'created').length &&
