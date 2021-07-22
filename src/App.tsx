@@ -85,9 +85,9 @@ function App() {
                                         <Form.Group className="mb-3">
                                             <Form.Label>Page size</Form.Label>
                                             <Form.Control type="text" placeholder="Page size"
-                                                          defaultValue={views[index].name}
+                                                          defaultValue={views[index].pageSize}
                                                           onChange={(e) => {
-                                                              views[index].name = e.target.value;
+                                                              views[index].pageSize = e.target.value;
                                                               setViews(views);
                                                           }}/>
                                         </Form.Group>
