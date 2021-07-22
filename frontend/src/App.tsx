@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.scss';
 import {Col, Form, Nav, Row, Tab, Tabs} from "react-bootstrap";
+import axios from 'axios';
 
 function App() {
     const [views, setViews] = useState([] as any[]);
@@ -9,6 +10,19 @@ function App() {
         {id: 'accountType', label: 'Account type'},
         {id: 'clientName', label: 'Client name'},
         {id: 'balance', label: 'Balance'}];
+
+
+    useEffect(() => {
+        const fetchAccounts = async () => {
+            const result = await axios(
+                'http://localhost:3001/accounts',
+            );
+
+            setViews(result.data);
+        };
+
+        fetchAccounts();
+    }, []);
 
     return <Tab.Container defaultActiveKey="first">
         <Row>
@@ -44,7 +58,8 @@ function App() {
                                             <Form.Label>Columns</Form.Label>
                                             {columns.map((c, cIndex) => {
                                                 return <Form.Check name={c.id} key={cIndex} type="checkbox"
-                                                                   label={c.label} defaultValue={c.id}
+                                                                   label={c.label}
+                                                                   checked={views[index].columns.filter((c2: string) => c2 === c.id).length}
                                                                    onChange={(e) => {
                                                                        if (!views[index].columns) {
                                                                            views[index].columns = [];
@@ -77,7 +92,7 @@ function App() {
                                                 setViews([...views]);
                                             }}>
                                                 <option value="asc">Ascending</option>
-                                                <option value="asc">Descending</option>
+                                                <option value="desc">Descending</option>
 
                                             </Form.Select>
                                         </Form.Group>
@@ -93,8 +108,10 @@ function App() {
                                         </Form.Group>
 
 
-                                        <button onClick={() => {
-
+                                        <button onClick={(e) => {
+                                            e.preventDefault();
+                                            axios.post('http://localhost:3001/accounts',
+                                                views);
 
                                         }}>Save
                                         </button>
